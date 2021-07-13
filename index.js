@@ -102,13 +102,45 @@ module.exports = (options) => {
       }
 
       var all_files=getAllFiles(process.cwd());
-      // var to_match = 'cashflowy_monthly_update_october';
-      // all_files.indexOf()
+      var shortlists=[];
       all_files.forEach(function(file){
-        if(file.indexOf(match[1])>-1)
+        // skip files in assets folder
+        if(file.indexOf('/assets/')>-1)
+          return;
+        // use this for debugging
+        // if(match[1]=='CSS')
+        //   console.log('test point');
+
+        // if file name contains the obsidian string somewhere
+        if(file.indexOf(match[1])>-1){
           href=file.split(process.cwd())[1].split('.md')[0];
+          // the value before it should be a slash. 
+          // e.g.
+          // '/notes/CSS', '/notes/Device size specific CSS'
+          // when searching for CSS 2nd link is not valid. 
+          var i = href.indexOf(match[1]);
+          if(href[i-1]=='/')
+            shortlists.push(href);
+        }
       })
-      console.log(href);
+      href='';
+      // if there is more than one match, we look for exact match
+      if(shortlists.length>1){
+        shortlists.forEach(function(file){
+          if(match[1]==file)
+            href=file;
+        })
+      }if(shortlists.length==1){
+        href=shortlists[0];
+      }
+
+      // use this for debugging
+      // console.log('\n\n\n\n\n---------test---------')
+      // console.log('obsidian url to match - '+match[1]);
+      // console.log('shortlists:')
+      // console.log(shortlists);
+      // console.log('final url:')
+      // console.log(href);
       href = utils.escape(href)
 
       htmlAttrs.push(`href="${href}"`)
