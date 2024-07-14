@@ -90,10 +90,10 @@ module.exports = (options) => {
               skip=true;
           })
           if(!skip){
-            if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-              arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+            if (fs.statSync(path.join(dirPath,file)).isDirectory()) {
+              arrayOfFiles = getAllFiles(path.join(dirPath,file), arrayOfFiles)
             } else {
-              arrayOfFiles.push(path.join(dirPath, "/", file))
+              arrayOfFiles.push(path.join(dirPath,file))
             }
           }
         })
@@ -105,7 +105,7 @@ module.exports = (options) => {
       var shortlists=[];
       all_files.forEach(function(file){
         // skip files in assets folder
-        if(file.indexOf('/assets/')>-1)
+        if(file.indexOf(path.sep + 'assets' + path.sep)>-1)
           return;
         // use this for debugging
         // if(match[1]=='CSS')
@@ -113,7 +113,7 @@ module.exports = (options) => {
 
         // if file name contains the obsidian string somewhere
         if(file.indexOf(match[1])>-1){
-          href=file.split(process.cwd())[1].split('.md')[0];
+          href=file.split(process.cwd())[1].split('.md')[0].replaceAll(path.sep, '/');
           // the value before it should be a slash. 
           // e.g.
           // '/notes/CSS', '/notes/Device size specific CSS'
